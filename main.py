@@ -311,10 +311,10 @@ def render_assumptions_editor(selected_cluster_name, vault_object_map_by_input):
 
     # Header Row
     # Columns: Vault (1.2), Supply Cap (2), Borrow Cap (2), Util % (1), Kink % (1), Base % (1), Rate at Kink % (1), Max % (1), Native % (1), Borrow % Caps (1), Supply % Caps (1)
-    col_ratios = [1, 1.5, 1.5, 1, 1, 1, 1, 1, 1, 1, 1]
+    col_ratios = [1, 1.5, 1.5, 1.2, 1.2, 1.2, 1.2, 1.2, 1.2, 1, 1]
     headers = [
         "Vault", "Supply Cap", "Borrow Cap", "Util %", 
-        "Kink Rate %", "Base Rate %", "Rate at Kink %", "Max Rate %", "Native %", 
+        "Kink Util %", "Base Rate %", "Kink Rate %", "Max Rate %", "Native %", 
         "Borrow % Caps", "Supply % Caps"
     ]
     
