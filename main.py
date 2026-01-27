@@ -4,7 +4,7 @@ import os
 import pandas as pd
 
 from vault import Vault
-from strategy import Strategy, construct_strategies
+from strategy import Strategy, construct_strategies, SingleSidedLendingStrategy, construct_single_sided_strategies
 from utils import calculate_rates
 
 # --- Constants ---
@@ -545,11 +545,65 @@ def compute_and_render_strategies(vault_object_map_by_input, vault_object_map_by
 
         st.session_state["strategy_rows"] = strategy_rows
 
-    # 3. Render Strategy Results
+        # 2b. Compute Single-Sided Lending Strategies
+        single_sided_strategies = construct_single_sided_strategies(vault_object_map_by_vault) if isinstance(vault_object_map_by_vault, dict) else []
+        single_sided_rows = []
+        for ss in single_sided_strategies:
+            lend_vault = vault_object_map_by_vault.get(ss.get("lendAsset"))
+            if not lend_vault:
+                continue
+
+            try:
+                ss_obj = SingleSidedLendingStrategy(lendVault=lend_vault)
+                single_sided_rows.append({
+                    "strategy": ss_obj.strategy_name,
+                    "asset": lend_vault.asset_symbol or lend_vault.vault_symbol or lend_vault.vault_address,
+                    "currentYield": ss_obj.calculate_current_yield(),
+                    "capsYield": ss_obj.calculate_caps_yield(),
+                })
+            except Exception:
+                continue
+
+        st.session_state["single_sided_rows"] = single_sided_rows
+
+    # 3. Render Single-Sided Lending Yields
+    single_sided_rows = st.session_state.get("single_sided_rows")
+    if isinstance(single_sided_rows, list) and single_sided_rows:
+        st.divider()
+        st.subheader("Single-Sided Lending Yields")
+        st.caption("Yields for simply lending borrowable assets (no leverage). Yield = Supply APY + Native Yield.")
+
+        ss_df = pd.DataFrame(single_sided_rows)
+
+        def color_yield_ss(val):
+            if not isinstance(val, (int, float)):
+                return ''
+            color = 'green' if val >= 0 else 'red'
+            return f'color: {color}'
+
+        ss_styler = ss_df[["strategy", "asset", "currentYield", "capsYield"]].style.map(color_yield_ss, subset=["currentYield", "capsYield"])
+        ss_styler.format({
+            "currentYield": "{:.3f} %",
+            "capsYield": "{:.3f} %",
+        })
+
+        st.dataframe(
+            ss_styler,
+            width="stretch",
+            hide_index=True,
+            column_config={
+                "strategy": st.column_config.TextColumn("Strategy"),
+                "asset": st.column_config.TextColumn("Asset"),
+                "currentYield": st.column_config.NumberColumn("Current Yield"),
+                "capsYield": st.column_config.NumberColumn("Caps Yield"),
+            }
+        )
+
+    # 4. Render Leveraged Strategy Results
     strategy_rows = st.session_state.get("strategy_rows")
     if isinstance(strategy_rows, list) and strategy_rows:
         st.divider()
-        st.subheader("Strategy Yields")
+        st.subheader("Leveraged Strategy Yields")
         st.caption("Computed after applying assumptions: currentYield uses borrowLTV; capsYield uses liquidationLTV.")
         
         df = pd.DataFrame(strategy_rows)

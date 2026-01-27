@@ -217,3 +217,39 @@ def construct_strategies(vault_object_map: dict[str, Vault]) -> list[dict[str, A
             )
 
     return strategies
+
+
+@dataclass
+class SingleSidedLendingStrategy:
+    """Represents a single-sided lending strategy (no leverage, just supply)."""
+    lendVault: Vault
+    strategy_name: str = ""
+
+    def __post_init__(self) -> None:
+        symbol = self.lendVault.asset_symbol or self.lendVault.vault_symbol or self.lendVault.vault_address
+        self.strategy_name = f"Lend {symbol}"
+
+    def calculate_current_yield(self) -> float:
+        """Current yield = current supply APY + native yield."""
+        return self.lendVault.current_supply_apy + self.lendVault.nativeYield
+
+    def calculate_caps_yield(self) -> float:
+        """Caps yield = supply APY at caps utilization + native yield."""
+        return self.lendVault.caps_supply_apy + self.lendVault.nativeYield
+
+
+def construct_single_sided_strategies(vault_object_map: dict[str, Vault]) -> list[dict[str, Any]]:
+    """
+    Construct single-sided lending strategies from a vault map.
+    Only includes vaults that are borrowable (borrow_cap > 0).
+    """
+    strategies: list[dict[str, Any]] = []
+
+    for vault_key, vault_obj in vault_object_map.items():
+        # Only include vaults that can be borrowed against (i.e., have a borrow cap)
+        if vault_obj.borrow_cap > 0:
+            strategies.append({
+                "lendAsset": getattr(vault_obj, "vault", None) or vault_key,
+            })
+
+    return strategies
