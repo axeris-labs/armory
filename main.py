@@ -48,6 +48,7 @@ def _reset_cluster_state() -> None:
         "assumptions_editor_version",
         "strategy_rows",
         "single_sided_rows",
+        "borrow_rate_rows",
     )
     for k in keys_to_remove:
         st.session_state.pop(k, None)
@@ -265,6 +266,7 @@ def fetch_and_store_data(selected_cluster):
         }
         st.session_state.pop("strategy_rows", None)
         st.session_state.pop("single_sided_rows", None)
+        st.session_state.pop("borrow_rate_rows", None)
 
 def render_vault_metrics(onchain_df):
     """Render the Vault Metrics table."""
@@ -541,6 +543,7 @@ def render_changes_and_reset(vault_object_map_by_input):
 
         st.session_state.pop("strategy_rows", None)
         st.session_state.pop("single_sided_rows", None)
+        st.session_state.pop("borrow_rate_rows", None)
         st.rerun()
 
 
@@ -713,12 +716,30 @@ def _compute_strategies(vault_object_map_by_input, vault_object_map_by_vault):
         except Exception:
             continue
 
-    return strategy_rows, single_sided_rows
+    # --- Borrow Rates ---
+    borrow_rate_rows = []
+    for vault_key, vault_obj in (vault_object_map_by_vault.items() if isinstance(vault_object_map_by_vault, dict) else []):
+        if vault_obj.borrow_cap <= 0:
+            continue
+        try:
+            oc = onchain_params.get(vault_to_input.get(vault_key, ""), {})
+            asset = vault_obj.asset_symbol or vault_obj.vault_symbol or vault_obj.vault_address
+            borrow_rate_rows.append({
+                "asset": asset,
+                "currentRate": oc.get("current_borrow_apy", 0),
+                "currentCapsRate": oc.get("caps_borrow_apy", 0),
+                "endRate": vault_obj.end_borrow_apy,
+                "endCapsRate": vault_obj.caps_borrow_apy,
+            })
+        except Exception:
+            continue
+
+    return strategy_rows, single_sided_rows, borrow_rate_rows
 
 
 def render_strategies(vault_object_map_by_input, vault_object_map_by_vault):
     """Dynamically compute and render strategy tables and charts."""
-    strategy_rows, single_sided_rows = _compute_strategies(vault_object_map_by_input, vault_object_map_by_vault)
+    strategy_rows, single_sided_rows, borrow_rate_rows = _compute_strategies(vault_object_map_by_input, vault_object_map_by_vault)
 
     yield_cols = ["currentYield", "currentCapsYield", "endYield", "endCapsYield"]
 
@@ -727,30 +748,57 @@ def render_strategies(vault_object_map_by_input, vault_object_map_by_vault):
             return ''
         return f'color: {"green" if val >= 0 else "red"}'
 
-    # --- Single-Sided Lending Yields ---
-    if single_sided_rows:
+    # --- Borrow Rates & Single-Sided Lending Yields (side by side) ---
+    if borrow_rate_rows or single_sided_rows:
         st.divider()
-        st.subheader("Single-Sided Lending Yields")
-        st.caption("Yields for simply lending borrowable assets (no leverage). Yield = Supply APY + Native Yield.")
+        col_borrow, col_lend = st.columns(2)
 
-        ss_df = pd.DataFrame(single_sided_rows)
-        ss_display_cols = ["strategy", "asset"] + yield_cols
-        ss_styler = ss_df[ss_display_cols].style.map(color_yield, subset=yield_cols)
-        ss_styler.format({col: "{:.3f} %" for col in yield_cols})
+        with col_borrow:
+            if borrow_rate_rows:
+                st.subheader("Borrow Rates")
+                st.caption("Borrow APY for each borrowable vault across the 4 states.")
 
-        st.dataframe(
-            ss_styler,
-            width="stretch",
-            hide_index=True,
-            column_config={
-                "strategy": st.column_config.TextColumn("Strategy"),
-                "asset": st.column_config.TextColumn("Asset"),
-                "currentYield": st.column_config.NumberColumn("Current"),
-                "currentCapsYield": st.column_config.NumberColumn("Current at Caps"),
-                "endYield": st.column_config.NumberColumn("End"),
-                "endCapsYield": st.column_config.NumberColumn("End at Caps"),
-            }
-        )
+                rate_cols = ["currentRate", "currentCapsRate", "endRate", "endCapsRate"]
+                br_df = pd.DataFrame(borrow_rate_rows)
+                br_display_cols = ["asset"] + rate_cols
+                br_styler = br_df[br_display_cols].style.map(color_yield, subset=rate_cols)
+                br_styler.format({col: "{:.3f} %" for col in rate_cols})
+
+                st.dataframe(
+                    br_styler,
+                    use_container_width=True,
+                    hide_index=True,
+                    column_config={
+                        "asset": st.column_config.TextColumn("Asset"),
+                        "currentRate": st.column_config.NumberColumn("Current"),
+                        "currentCapsRate": st.column_config.NumberColumn("Current at Caps"),
+                        "endRate": st.column_config.NumberColumn("End"),
+                        "endCapsRate": st.column_config.NumberColumn("End at Caps"),
+                    }
+                )
+
+        with col_lend:
+            if single_sided_rows:
+                st.subheader("Single-Sided Lending Yields")
+                st.caption("Yield = Supply APY + Native Yield (no leverage).")
+
+                ss_df = pd.DataFrame(single_sided_rows)
+                ss_display_cols = ["asset"] + yield_cols
+                ss_styler = ss_df[ss_display_cols].style.map(color_yield, subset=yield_cols)
+                ss_styler.format({col: "{:.3f} %" for col in yield_cols})
+
+                st.dataframe(
+                    ss_styler,
+                    use_container_width=True,
+                    hide_index=True,
+                    column_config={
+                        "asset": st.column_config.TextColumn("Asset"),
+                        "currentYield": st.column_config.NumberColumn("Current"),
+                        "currentCapsYield": st.column_config.NumberColumn("Current at Caps"),
+                        "endYield": st.column_config.NumberColumn("End"),
+                        "endCapsYield": st.column_config.NumberColumn("End at Caps"),
+                    }
+                )
 
     # --- Leveraged Strategy Yields ---
     if strategy_rows:
@@ -851,6 +899,7 @@ def render_strategies(vault_object_map_by_input, vault_object_map_by_vault):
     # Store for export
     st.session_state["strategy_rows"] = strategy_rows
     st.session_state["single_sided_rows"] = single_sided_rows
+    st.session_state["borrow_rate_rows"] = borrow_rate_rows
 
 
 def build_export_json(cluster_name: str, vault_object_map_by_input: dict[str, Vault]) -> dict:
@@ -951,6 +1000,7 @@ def build_export_json(cluster_name: str, vault_object_map_by_input: dict[str, Va
     # --- Strategies section ---
     strategy_rows = st.session_state.get("strategy_rows", [])
     single_sided_rows = st.session_state.get("single_sided_rows", [])
+    borrow_rate_rows = st.session_state.get("borrow_rate_rows", [])
 
     leveraged_export = []
     for sr in strategy_rows:
@@ -981,11 +1031,24 @@ def build_export_json(cluster_name: str, vault_object_map_by_input: dict[str, Va
             },
         })
 
+    borrow_rates_export = []
+    for br in borrow_rate_rows:
+        borrow_rates_export.append({
+            "asset": br["asset"],
+            "rates": {
+                "current": round(br["currentRate"], 3),
+                "current_at_caps": round(br["currentCapsRate"], 3),
+                "end": round(br["endRate"], 3),
+                "end_at_caps": round(br["endCapsRate"], 3),
+            },
+        })
+
     return {
         "cluster": cluster_name,
         "exported_at": datetime.now(timezone.utc).isoformat(),
         "vaults": vaults_export,
         "modifications": modifications,
+        "borrow_rates": borrow_rates_export,
         "strategies": {
             "leveraged": leveraged_export,
             "single_sided": single_sided_export,
