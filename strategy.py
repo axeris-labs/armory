@@ -44,12 +44,16 @@ class Strategy:
         yield_with_LTV = calculate_yield_with_LTV(gain, cost, self.borrowLTV)
         return yield_with_LTV
 
-    def generate_simulation_chart(self):
+    def generate_simulation_chart(self,
+                                  onchain_debt_util: float | None = None,
+                                  onchain_coll_util: float | None = None,
+                                  onchain_caps_debt_util: float | None = None,
+                                  onchain_caps_coll_util: float | None = None):
         # Resolution for the heatmap
         steps = 101
         x = np.linspace(0, 1, steps)  # Collateral Utilization
         y = np.linspace(0, 1, steps)  # Debt Utilization
-        
+
         z = []
         for d_util in y:
             row = []
@@ -69,9 +73,8 @@ class Strategy:
             hovertemplate='Collateral Util: %{x:.1f}%<br>Debt Util: %{y:.1f}%<br>Yield: %{z:.2f}%<extra></extra>'
         ))
 
-        # Point 1: Current Utilization (from raw on-chain data)
+        # State 1a: Current on-chain utilization
         def get_raw_util(v: Vault) -> float:
-            # Safely access raw dictionary
             if not v.raw: return 0.0
             assets = float(v.raw.get("totalAssets", 0))
             borrowed = float(v.raw.get("totalBorrowed", 0))
@@ -79,29 +82,55 @@ class Strategy:
                 return (borrowed / assets) * 100
             return 0.0
 
-        d_curr_real = get_raw_util(self.debtVault)
-        c_curr_real = get_raw_util(self.collateralVault)
+        d_curr = onchain_debt_util if onchain_debt_util is not None else get_raw_util(self.debtVault)
+        c_curr = onchain_coll_util if onchain_coll_util is not None else get_raw_util(self.collateralVault)
 
-        # Point 3: Utilization at Caps (from assumption table)
-        d_caps = self.debtVault.utilization_at_caps
-        c_caps = self.collateralVault.utilization_at_caps
+        # State 1b: Current at on-chain caps
+        d_curr_caps = onchain_caps_debt_util if onchain_caps_debt_util is not None else get_raw_util(self.debtVault)
+        c_curr_caps = onchain_caps_coll_util if onchain_caps_coll_util is not None else get_raw_util(self.collateralVault)
 
-        # Trace 1: Current (Circle)
+        # State 2a: End utilization (assumed supply/borrow)
+        d_end = self.debtVault.end_utilization
+        c_end = self.collateralVault.end_utilization
+
+        # State 2b: End at assumed caps
+        d_end_caps = self.debtVault.utilization_at_caps
+        c_end_caps = self.collateralVault.utilization_at_caps
+
+        # Trace 1a: Current (white circle)
         fig.add_trace(go.Scatter(
-            x=[c_curr_real], y=[d_curr_real],
+            x=[c_curr], y=[d_curr],
             mode='markers',
-            name='Current Util',
+            name='Current',
             marker=dict(symbol='circle', size=12, color='white', line=dict(width=1, color='black')),
             hovertemplate='Current<br>Collateral: %{x:.1f}%<br>Debt: %{y:.1f}%<extra></extra>'
         ))
 
-        # Trace 3: At Caps (Circle)
+        # Trace 1b: Current at Caps (blue circle)
         fig.add_trace(go.Scatter(
-            x=[c_caps], y=[d_caps],
+            x=[c_curr_caps], y=[d_curr_caps],
             mode='markers',
-            name='Util at Caps',
+            name='Current at Caps',
+            marker=dict(symbol='circle', size=12, color='#3B82F6', line=dict(width=1, color='black')),
+            hovertemplate='Current at Caps<br>Collateral: %{x:.1f}%<br>Debt: %{y:.1f}%<extra></extra>'
+        ))
+
+        # Trace 2a: End (green diamond)
+        fig.add_trace(go.Scatter(
+            x=[c_end], y=[d_end],
+            mode='markers',
+            name='End',
+            marker=dict(symbol='diamond', size=12, color='#22C55E', line=dict(width=1, color='black')),
+            hovertemplate='End<br>Collateral: %{x:.1f}%<br>Debt: %{y:.1f}%<extra></extra>'
+        ))
+
+        # Trace 2b: End at Caps (red circle)
+        fig.add_trace(go.Scatter(
+            x=[c_end_caps], y=[d_end_caps],
+            mode='markers',
+            name='End at Caps',
             marker=dict(symbol='circle', size=12, color='red', line=dict(width=1, color='black')),
-            hovertemplate='At Caps<br>Collateral: %{x:.1f}%<br>Debt: %{y:.1f}%<extra></extra>'
+            hovertemplate='End at Caps<br>Collateral: %{x:.1f}%<br>Debt: %{y:.1f}%<extra></extra>'
         ))
 
         fig.update_layout(
@@ -118,7 +147,7 @@ class Strategy:
                 x=1
             )
         )
-        
+
         return fig
 
     def generate_collateral_sensitivity_chart(self, fixed_debt_utilization: float):

@@ -47,5 +47,11 @@ def calculate_max_leverage(borrowLTV: float) -> float:
 def calculate_yield_with_LTV(supply_rate: float, borrow_rate: float, borrowLTV: float) -> float:
     return (supply_rate - borrow_rate * borrowLTV) / (1.0 - borrowLTV)
 
-def calculate_yield_with_leverage(supply_rate: float, borrow_rate: float, leverage: float) -> float:    
+def calculate_yield_with_leverage(supply_rate: float, borrow_rate: float, leverage: float) -> float:
     return (leverage * (supply_rate - borrow_rate)) + borrow_rate
+
+def compute_strategy_yield(coll_supply_apy: float, coll_native_yield: float, debt_borrow_apy: float, ltv: float) -> float:
+    """Compute leveraged strategy yield from explicit rate inputs."""
+    gain = coll_supply_apy + coll_native_yield
+    cost = debt_borrow_apy
+    return calculate_yield_with_LTV(gain, cost, ltv)

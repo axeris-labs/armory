@@ -264,6 +264,12 @@ class Vault:
     caps_borrow_apy: float = 0.0
     caps_supply_apy: float = 0.0
 
+    assumed_supply: float = 0.0
+    assumed_borrow: float = 0.0
+    end_utilization: float = 0.0
+    end_borrow_apy: float = 0.0
+    end_supply_apy: float = 0.0
+
     error: str | None = None
     fetched: bool = False
     raw: dict[str, Any] = field(default_factory=dict)
@@ -287,6 +293,10 @@ class Vault:
         if self.supply_cap > 0:
             self.utilization_at_caps = round((self.borrow_cap / self.supply_cap) * 100, 3)
 
+        self.end_utilization = 0.0
+        if self.assumed_supply > 0:
+            self.end_utilization = round((self.assumed_borrow / self.assumed_supply) * 100, 3)
+
         if self.interest_rate_model_info and "kinkPercent" in self.interest_rate_model_info:
             # Create 0-1 scaled version for calculation, as params are stored in 0-100 scale
             irm_scaled = {
@@ -306,11 +316,19 @@ class Vault:
             )
             self.caps_borrow_apy = round(caps_borrow_apy * 100, 3)
             self.caps_supply_apy = round(caps_supply_apy * 100, 3)
+
+            end_borrow_apy, end_supply_apy = calculate_rates(
+                self.end_utilization / 100, irm_scaled
+            )
+            self.end_borrow_apy = round(end_borrow_apy * 100, 3)
+            self.end_supply_apy = round(end_supply_apy * 100, 3)
         else:
             self.current_borrow_apy = 0.0
             self.current_supply_apy = 0.0
             self.caps_borrow_apy = 0.0
             self.caps_supply_apy = 0.0
+            self.end_borrow_apy = 0.0
+            self.end_supply_apy = 0.0
 
     def refresh(self) -> None:
         data = get_vault_info_json(self.vault_address)
@@ -332,6 +350,9 @@ class Vault:
         self.total_assets = self._as_float(data.get("totalAssets"))
         self.supply_cap = self._as_float(data.get("supplyCap"))
         self.borrow_cap = self._as_float(data.get("borrowCap"))
+
+        self.assumed_supply = self.total_assets
+        self.assumed_borrow = self.total_borrowed
 
         self.interest_rate_model = self._as_str(data.get("interestRateModel"))
         irm_info = data.get("interestRateModelInfo")
@@ -365,15 +386,20 @@ class Vault:
             "totalAssets": self.total_assets,
             "supplyCap": self.supply_cap,
             "borrowCap": self.borrow_cap,
+            "assumedSupply": self.assumed_supply,
+            "assumedBorrow": self.assumed_borrow,
             "interestRateModel": self.interest_rate_model,
             "interestRateModelInfo": self.interest_rate_model_info,
             "collateralLTVInfo": self.collateral_ltv_info,
             "currentUtilization": self.current_utilization,
             "utilizationAtCaps": self.utilization_at_caps,
+            "endUtilization": self.end_utilization,
             "currentBorrowApy": self.current_borrow_apy,
             "currentSupplyApy": self.current_supply_apy,
             "capsBorrowApy": self.caps_borrow_apy,
             "capsSupplyApy": self.caps_supply_apy,
+            "endBorrowApy": self.end_borrow_apy,
+            "endSupplyApy": self.end_supply_apy,
         }
 
     @staticmethod

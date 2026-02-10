@@ -1,0 +1,407 @@
+{
+  "cluster": "Sentora PYUSD",
+  "exported_at": "2026-02-09T05:55:08.239484+00:00",
+  "vaults": {
+    "ePYUSD-6": {
+      "current": {
+        "supply": 280028588.29,
+        "borrow": 148487093.76,
+        "supply_cap": 280000000.0,
+        "borrow_cap": 152000000.0,
+        "utilization_pct": 53.026,
+        "borrow_apy_pct": 4.239,
+        "supply_apy_pct": 2.023,
+        "native_yield_pct": 5.722,
+        "irm": {
+          "kink_pct": 75.0,
+          "base_rate_pct": 0.0,
+          "kink_rate_pct": 5.996,
+          "max_rate_pct": 39.969
+        }
+      },
+      "current_at_caps": {
+        "supply": 280000000.0,
+        "borrow": 152000000.0,
+        "utilization_pct": 54.286,
+        "borrow_apy_pct": 4.34,
+        "supply_apy_pct": 2.12
+      },
+      "end": {
+        "supply": 280000000.0,
+        "borrow": 148487093.76,
+        "supply_cap": 280000000.0,
+        "borrow_cap": 252000000.0,
+        "utilization_pct": 53.031,
+        "borrow_apy_pct": 2.652,
+        "supply_apy_pct": 1.266,
+        "native_yield_pct": 4.5,
+        "irm": {
+          "kink_pct": 90.0,
+          "base_rate_pct": 0.0,
+          "kink_rate_pct": 4.5,
+          "max_rate_pct": 39.969
+        }
+      },
+      "end_at_caps": {
+        "supply": 280000000.0,
+        "borrow": 252000000.0,
+        "utilization_pct": 90.0,
+        "borrow_apy_pct": 4.5,
+        "supply_apy_pct": 3.645
+      }
+    },
+    "eUSDC-80": {
+      "current": {
+        "supply": 170049451.98,
+        "borrow": 130062931.06,
+        "supply_cap": 170000000.0,
+        "borrow_cap": 130000000.0,
+        "utilization_pct": 76.485,
+        "borrow_apy_pct": 7.643,
+        "supply_apy_pct": 5.261,
+        "native_yield_pct": 0.0,
+        "irm": {
+          "kink_pct": 90.0,
+          "base_rate_pct": 0.0,
+          "kink_rate_pct": 8.994,
+          "max_rate_pct": 39.969
+        }
+      },
+      "current_at_caps": {
+        "supply": 170000000.0,
+        "borrow": 130000000.0,
+        "utilization_pct": 76.471,
+        "borrow_apy_pct": 7.642,
+        "supply_apy_pct": 5.26
+      },
+      "end": {
+        "supply": 170000000.0,
+        "borrow": 130000000.0,
+        "supply_cap": 200000000.0,
+        "borrow_cap": 180000000.0,
+        "utilization_pct": 76.471,
+        "borrow_apy_pct": 4.928,
+        "supply_apy_pct": 3.392,
+        "native_yield_pct": 0.5,
+        "irm": {
+          "kink_pct": 90.0,
+          "base_rate_pct": 0.0,
+          "kink_rate_pct": 5.8,
+          "max_rate_pct": 39.969
+        }
+      },
+      "end_at_caps": {
+        "supply": 200000000.0,
+        "borrow": 180000000.0,
+        "utilization_pct": 90.0,
+        "borrow_apy_pct": 5.8,
+        "supply_apy_pct": 4.698
+      }
+    },
+    "eUSDe-10": {
+      "current": {
+        "supply": 0.0,
+        "borrow": 0.0,
+        "supply_cap": 50000000.0,
+        "borrow_cap": 45000000.0,
+        "utilization_pct": 0.0,
+        "borrow_apy_pct": 0.0,
+        "supply_apy_pct": 0.0,
+        "native_yield_pct": 0.0,
+        "irm": {
+          "kink_pct": 90.0,
+          "base_rate_pct": 0.0,
+          "kink_rate_pct": 8.994,
+          "max_rate_pct": 39.969
+        }
+      },
+      "current_at_caps": {
+        "supply": 50000000.0,
+        "borrow": 45000000.0,
+        "utilization_pct": 90.0,
+        "borrow_apy_pct": 8.994,
+        "supply_apy_pct": 7.285
+      },
+      "end": {
+        "supply": 0.0,
+        "borrow": 0.0,
+        "supply_cap": 50000000.0,
+        "borrow_cap": 45000000.0,
+        "utilization_pct": 0.0,
+        "borrow_apy_pct": 0.0,
+        "supply_apy_pct": 0.0,
+        "native_yield_pct": 0.0,
+        "irm": {
+          "kink_pct": 90.0,
+          "base_rate_pct": 0.0,
+          "kink_rate_pct": 6.2,
+          "max_rate_pct": 39.969
+        }
+      },
+      "end_at_caps": {
+        "supply": 50000000.0,
+        "borrow": 45000000.0,
+        "utilization_pct": 90.0,
+        "borrow_apy_pct": 6.2,
+        "supply_apy_pct": 5.022
+      }
+    },
+    "esUSDe-9": {
+      "current": {
+        "supply": 467262.96,
+        "borrow": 0.0,
+        "supply_cap": 30000000.0,
+        "borrow_cap": 0.0,
+        "utilization_pct": 0.0,
+        "borrow_apy_pct": 0.0,
+        "supply_apy_pct": 0.0,
+        "native_yield_pct": 3.556,
+        "irm": {
+          "kink_pct": 0,
+          "base_rate_pct": 0,
+          "kink_rate_pct": 0,
+          "max_rate_pct": 0
+        }
+      },
+      "current_at_caps": {
+        "supply": 30000000.0,
+        "borrow": 0.0,
+        "utilization_pct": 0.0,
+        "borrow_apy_pct": 0.0,
+        "supply_apy_pct": 0.0
+      },
+      "end": {
+        "supply": 467262.96,
+        "borrow": 0.0,
+        "supply_cap": 30000000.0,
+        "borrow_cap": 0.0,
+        "utilization_pct": 0.0,
+        "borrow_apy_pct": 0.0,
+        "supply_apy_pct": 0.0,
+        "native_yield_pct": 3.556,
+        "irm": {
+          "kink_pct": 0,
+          "base_rate_pct": 0,
+          "kink_rate_pct": 0,
+          "max_rate_pct": 0
+        }
+      },
+      "end_at_caps": {
+        "supply": 30000000.0,
+        "borrow": 0.0,
+        "utilization_pct": 0.0,
+        "borrow_apy_pct": 0.0,
+        "supply_apy_pct": 0.0
+      }
+    }
+  },
+  "modifications": {
+    "ePYUSD-6": {
+      "borrow_cap": {
+        "from": 152000000.0,
+        "to": 252000000.0
+      },
+      "assumed_supply": {
+        "from": 280028588.29,
+        "to": 280000000.0
+      },
+      "kink_pct": {
+        "from": 75.0,
+        "to": 90.0
+      },
+      "kink_rate_pct": {
+        "from": 5.996,
+        "to": 4.5
+      },
+      "native_yield_pct": {
+        "from": 5.722,
+        "to": 4.5
+      }
+    },
+    "eUSDC-80": {
+      "supply_cap": {
+        "from": 170000000.0,
+        "to": 200000000.0
+      },
+      "borrow_cap": {
+        "from": 130000000.0,
+        "to": 180000000.0
+      },
+      "assumed_supply": {
+        "from": 170049451.98,
+        "to": 170000000.0
+      },
+      "assumed_borrow": {
+        "from": 130062931.06,
+        "to": 130000000.0
+      },
+      "kink_rate_pct": {
+        "from": 8.994,
+        "to": 5.8
+      },
+      "native_yield_pct": {
+        "from": 0.0,
+        "to": 0.5
+      }
+    },
+    "eUSDe-10": {
+      "kink_rate_pct": {
+        "from": 8.994,
+        "to": 6.2
+      }
+    }
+  },
+  "strategies": {
+    "leveraged": [
+      {
+        "name": "PYUSD \u2192 USDC",
+        "debt_asset": "PYUSD",
+        "collateral_asset": "USDC",
+        "borrow_ltv": 0.91,
+        "liquidation_ltv": 0.93,
+        "yields": {
+          "current": 15.595,
+          "current_at_caps": 17.483,
+          "end": 16.43,
+          "end_at_caps": 14.471
+        }
+      },
+      {
+        "name": "PYUSD \u2192 USDe",
+        "debt_asset": "PYUSD",
+        "collateral_asset": "USDe",
+        "borrow_ltv": 0.91,
+        "liquidation_ltv": 0.93,
+        "yields": {
+          "current": -42.861,
+          "current_at_caps": 46.411,
+          "end": -26.815,
+          "end_at_caps": 11.957
+        }
+      },
+      {
+        "name": "PYUSD \u2192 sUSDe",
+        "debt_asset": "PYUSD",
+        "collateral_asset": "sUSDe",
+        "borrow_ltv": 0.88,
+        "liquidation_ltv": 0.9,
+        "yields": {
+          "current": -1.453,
+          "current_at_caps": -3.5,
+          "end": 10.185,
+          "end_at_caps": -4.94
+        }
+      },
+      {
+        "name": "USDC \u2192 PYUSD",
+        "debt_asset": "USDC",
+        "collateral_asset": "PYUSD",
+        "borrow_ltv": 0.89,
+        "liquidation_ltv": 0.91,
+        "yields": {
+          "current": 8.57,
+          "current_at_caps": 9.864,
+          "end": 12.546,
+          "end_at_caps": 31.856
+        }
+      },
+      {
+        "name": "USDC \u2192 USDe",
+        "debt_asset": "USDC",
+        "collateral_asset": "USDe",
+        "borrow_ltv": 0.91,
+        "liquidation_ltv": 0.93,
+        "yields": {
+          "current": -77.279,
+          "current_at_caps": 2.542,
+          "end": -49.828,
+          "end_at_caps": -5.314
+        }
+      },
+      {
+        "name": "USDC \u2192 sUSDe",
+        "debt_asset": "USDC",
+        "collateral_asset": "sUSDe",
+        "borrow_ltv": 0.88,
+        "liquidation_ltv": 0.9,
+        "yields": {
+          "current": -26.415,
+          "current_at_caps": -33.218,
+          "end": -6.505,
+          "end_at_caps": -16.64
+        }
+      },
+      {
+        "name": "USDe \u2192 PYUSD",
+        "debt_asset": "USDe",
+        "collateral_asset": "PYUSD",
+        "borrow_ltv": 0.89,
+        "liquidation_ltv": 0.91,
+        "yields": {
+          "current": 70.409,
+          "current_at_caps": -3.806,
+          "end": 52.418,
+          "end_at_caps": 27.811
+        }
+      },
+      {
+        "name": "USDe \u2192 USDC",
+        "debt_asset": "USDe",
+        "collateral_asset": "USDC",
+        "borrow_ltv": 0.91,
+        "liquidation_ltv": 0.93,
+        "yields": {
+          "current": 58.456,
+          "current_at_caps": -44.349,
+          "end": 43.244,
+          "end_at_caps": -8.114
+        }
+      },
+      {
+        "name": "USDe \u2192 sUSDe",
+        "debt_asset": "USDe",
+        "collateral_asset": "sUSDe",
+        "borrow_ltv": 0.88,
+        "liquidation_ltv": 0.9,
+        "yields": {
+          "current": 29.633,
+          "current_at_caps": -45.386,
+          "end": 29.633,
+          "end_at_caps": -20.24
+        }
+      }
+    ],
+    "single_sided": [
+      {
+        "name": "Lend PYUSD",
+        "asset": "PYUSD",
+        "yields": {
+          "current": 7.745,
+          "current_at_caps": 7.842,
+          "end": 5.766,
+          "end_at_caps": 8.145
+        }
+      },
+      {
+        "name": "Lend USDC",
+        "asset": "USDC",
+        "yields": {
+          "current": 5.261,
+          "current_at_caps": 5.26,
+          "end": 3.892,
+          "end_at_caps": 5.198
+        }
+      },
+      {
+        "name": "Lend USDe",
+        "asset": "USDe",
+        "yields": {
+          "current": 0.0,
+          "current_at_caps": 7.285,
+          "end": 0.0,
+          "end_at_caps": 5.022
+        }
+      }
+    ]
+  }
+}
