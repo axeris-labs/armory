@@ -1,5 +1,5 @@
 import json
-from vault import Vault
+from src.vault import Vault
 
 # Test vault address
 TEST_VAULT = "0xaF5372792a29dC6b296d6FFD4AA3386aff8f9BB2"

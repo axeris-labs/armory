@@ -11,7 +11,7 @@ from hexbytes import HexBytes
 import requests
 from web3 import Web3
 
-from utils import calculate_rates, calculate_max_leverage, calculate_yield_with_LTV, calculate_yield_with_leverage
+from src.utils import calculate_rates, calculate_max_leverage, calculate_yield_with_LTV, calculate_yield_with_leverage
 
 
 load_dotenv()
@@ -22,7 +22,7 @@ UINT32_MAX = 4294967295
 
 VAULT_LENS = "0xc3c45633e45041bf3be841f89d2cb51e2f657403"
 RPC_URL = os.getenv("RPC_URL")
-ABI_PATH = Path(__file__).with_name("vault_abi.json")
+ABI_PATH = Path(__file__).resolve().parent.parent / "vault_abi.json"
 _ABI_CACHE: list[dict[str, Any]] | None = None
 
 

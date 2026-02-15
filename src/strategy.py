@@ -4,8 +4,8 @@ from typing import Any
 import plotly.graph_objects as go
 import numpy as np
 
-from vault import Vault
-from utils import calculate_rates, calculate_max_leverage, calculate_yield_with_LTV, calculate_yield_with_leverage
+from src.vault import Vault
+from src.utils import calculate_rates, calculate_max_leverage, calculate_yield_with_LTV, calculate_yield_with_leverage
  
 @dataclass
 class Strategy:

@@ -5,9 +5,11 @@ from datetime import datetime, timezone
 
 import pandas as pd
 
-from vault import Vault
-from strategy import Strategy, construct_strategies, SingleSidedLendingStrategy, construct_single_sided_strategies
-from utils import calculate_rates, compute_strategy_yield
+from src.vault import Vault
+from src.strategy import Strategy, construct_strategies, SingleSidedLendingStrategy, construct_single_sided_strategies
+from src.utils import calculate_rates, compute_strategy_yield
+from src.formatting import fmt_val
+from src.css import inject_number_input_css
 
 # --- Constants ---
 PRESET_FILE = os.path.join(os.path.dirname(__file__), "cluster_preset_v2.json")
@@ -23,16 +25,6 @@ def load_presets():
 def save_presets(presets):
     with open(PRESET_FILE, 'w') as f:
         json.dump(presets, f, indent=4)
-
-def fmt_val(val):
-    """Format numeric values with K/M suffixes."""
-    val = float(val) if pd.notnull(val) else 0
-    if val >= 1_000_000:
-        return f"{val/1_000_000:.2f}M"
-    elif val >= 1_000:
-        return f"{val/1_000:.2f}K"
-    else:
-        return f"{val:,.2f}"
 
 def _reset_cluster_state() -> None:
     """Clear session state variables related to the cluster."""
@@ -1077,24 +1069,7 @@ def main():
 
     st.set_page_config(layout="wide")
 
-    # Stack number input +/- buttons vertically to save horizontal space
-    st.markdown("""
-    <style>
-    /* Stack the buttons wrapper from horizontal to vertical, reversed (+ on top, - on bottom) */
-    div:has(> [data-testid="stNumberInputStepDown"]) {
-        display: flex !important;
-        flex-direction: column-reverse !important;
-    }
-
-    /* Make step buttons compact for vertical stacking */
-    [data-testid="stNumberInputStepDown"],
-    [data-testid="stNumberInputStepUp"] {
-        padding: 0 4px !important;
-        min-width: 20px !important;
-        width: 24px !important;
-    }
-    </style>
-    """, unsafe_allow_html=True)
+    inject_number_input_css()
 
     st.title("Vault Cluster Manager")
 
