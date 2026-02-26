@@ -31,7 +31,7 @@ class Strategy:
         gain = self.collateralVault.caps_supply_apy + self.collateralVault.nativeYield
         cost = self.debtVault.caps_borrow_apy
 
-        yield_with_LTV = calculate_yield_with_LTV(gain, cost, self.liquidationLTV)
+        yield_with_LTV = calculate_yield_with_LTV(gain, cost, self.borrowLTV)
         return yield_with_LTV
 
     def calculate_yield_with_utilization(self, debt_utilization: float, collateral_utilization: float) -> float:

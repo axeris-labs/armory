@@ -645,12 +645,12 @@ def _compute_strategies(vault_object_map_by_input, vault_object_map_by_vault):
                 ltv=borrow_ltv,
             )
 
-            # State 1b: current at caps (on-chain caps rates, liquidationLTV)
+            # State 1b: current at caps (on-chain caps rates, borrowLTV)
             current_caps_yield = compute_strategy_yield(
                 coll_supply_apy=coll_oc.get("caps_supply_apy", 0),
                 coll_native_yield=coll_oc.get("native_yield", 0),
                 debt_borrow_apy=debt_oc.get("caps_borrow_apy", 0),
-                ltv=liquidation_ltv,
+                ltv=borrow_ltv,
             )
 
             # State 2a: end (assumed rates from vault objects, borrowLTV)
@@ -661,12 +661,12 @@ def _compute_strategies(vault_object_map_by_input, vault_object_map_by_vault):
                 ltv=borrow_ltv,
             )
 
-            # State 2b: end at caps (assumed caps rates from vault objects, liquidationLTV)
+            # State 2b: end at caps (assumed caps rates from vault objects, borrowLTV)
             end_caps_yield = compute_strategy_yield(
                 coll_supply_apy=coll_vault.caps_supply_apy,
                 coll_native_yield=coll_vault.nativeYield,
                 debt_borrow_apy=debt_vault.caps_borrow_apy,
-                ltv=liquidation_ltv,
+                ltv=borrow_ltv,
             )
 
             strategy_rows.append({
@@ -796,7 +796,7 @@ def render_strategies(vault_object_map_by_input, vault_object_map_by_vault):
     if strategy_rows:
         st.divider()
         st.subheader("Leveraged Strategy Yields")
-        st.caption("Current/End use borrowLTV; Current at Caps/End at Caps use liquidationLTV.")
+        st.caption("All states use borrowLTV for leverage calculations.")
 
         df = pd.DataFrame(strategy_rows)
         display_cols = ["strategy", "debtAsset", "collateralAsset"] + yield_cols
